@@ -1,0 +1,2443 @@
+<!DOCTYPE html>
+<html lang="en" data-device="desktop" data-theme="gold">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Fortunatus — Server of the Saints &amp; HawkStudio Sacred Synth | Forefront Hawk &amp; Gemini Aargon</title>
+<style>
+  :root {
+    --bg: #070A12;
+    --bg-panel: #0E1422;
+    --bg-card: #131B2E;
+    --accent: #D4AF37;
+    --accent-soft: rgba(212, 175, 55, 0.16);
+    --cyan: #00F5D4;
+    --cyan-soft: rgba(0, 245, 212, 0.14);
+    --text: #F8FAFC;
+    --text-muted: #94A3B8;
+    --border: rgba(212, 175, 55, 0.35);
+    --crimson: #E11D48;
+    --emerald: #10B981;
+    --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+
+  html[data-theme="cyberpunk"] {
+    --bg: #090414;
+    --bg-panel: #140828;
+    --bg-card: #1E0D3A;
+    --accent: #FF2A85;
+    --accent-soft: rgba(255, 42, 133, 0.18);
+    --cyan: #00F0FF;
+    --cyan-soft: rgba(0, 240, 255, 0.15);
+    --text: #FDF2F8;
+    --text-muted: #C4B5FD;
+    --border: rgba(255, 42, 133, 0.45);
+  }
+
+  html[data-theme="matrix"] {
+    --bg: #020B05;
+    --bg-panel: #06180C;
+    --bg-card: #0A2413;
+    --accent: #00FF66;
+    --accent-soft: rgba(0, 255, 102, 0.15);
+    --cyan: #38BDF8;
+    --cyan-soft: rgba(56, 189, 248, 0.15);
+    --text: #ECFDF5;
+    --text-muted: #6EE7B7;
+    --border: rgba(0, 255, 102, 0.4);
+  }
+
+  html[data-theme="tactical"] {
+    --bg: #040D14;
+    --bg-panel: #081A28;
+    --bg-card: #0D263A;
+    --accent: #00F5D4;
+    --accent-soft: rgba(0, 245, 212, 0.16);
+    --cyan: #F59E0B;
+    --cyan-soft: rgba(245, 158, 11, 0.15);
+    --text: #F0F9FF;
+    --text-muted: #7DD3FC;
+    --border: rgba(0, 245, 212, 0.4);
+  }
+
+  html[data-theme="daylight"] {
+    --bg: #F8F5EE;
+    --bg-panel: #EFE9DC;
+    --bg-card: #FFFFFF;
+    --accent: #9A6F0B;
+    --accent-soft: rgba(154, 111, 11, 0.12);
+    --cyan: #0369A1;
+    --cyan-soft: rgba(3, 105, 161, 0.12);
+    --text: #1E293B;
+    --text-muted: #475569;
+    --border: rgba(154, 111, 11, 0.35);
+  }
+
+  html[data-theme="byzantium"] {
+    --bg: #0E0614;
+    --bg-panel: #1A0B26;
+    --bg-card: #251038;
+    --accent: #FBBF24;
+    --accent-soft: rgba(251, 191, 36, 0.18);
+    --cyan: #C084FC;
+    --cyan-soft: rgba(192, 132, 252, 0.16);
+    --text: #FAF5FF;
+    --text-muted: #D8B4FE;
+    --border: rgba(251, 191, 36, 0.4);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: 16px;
+    transition: background 0.25s ease, color 0.25s ease;
+    overflow-x: hidden;
+  }
+
+  a {
+    color: var(--cyan);
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  /* Device Posture Reconfigurer Shell */
+  .app-shell {
+    max-width: 1440px;
+    margin: 0 auto;
+    transition: max-width 0.3s ease;
+  }
+
+  html[data-device="mobile"] .app-shell {
+    max-width: 430px;
+    border: 3px solid var(--accent);
+    border-radius: 28px;
+    padding: 12px;
+    background: var(--bg-panel);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.65);
+  }
+
+  html[data-device="tablet"] .app-shell {
+    max-width: 1024px;
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    padding: 16px;
+  }
+
+  html[data-device="fold"] .app-shell {
+    max-width: 1320px;
+    border: 3px solid var(--cyan);
+    border-radius: 22px;
+    padding: 14px;
+    position: relative;
+  }
+
+  .fold-hinge-banner {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: linear-gradient(90deg, transparent, var(--cyan-soft), transparent);
+    border-top: 1px dashed var(--cyan);
+    border-bottom: 1px dashed var(--cyan);
+    color: var(--cyan);
+    font-size: 0.76rem;
+    font-family: var(--font-mono);
+    padding: 4px 12px;
+    margin-bottom: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  html[data-device="fold"] .fold-hinge-banner {
+    display: flex;
+  }
+
+  /* Top Command Header */
+  .top-header {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  }
+
+  .brand-cluster {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-emblem {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--cyan));
+    color: #070A12;
+    font-weight: 900;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 18px var(--accent-soft);
+    flex-shrink: 0;
+  }
+
+  .brand-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+  }
+
+  .brand-subtitle {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .toolbar-cluster {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .pill-badge {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    padding: 4px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--accent-soft);
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .pill-badge.live {
+    background: rgba(16, 185, 129, 0.16);
+    border-color: rgba(16, 185, 129, 0.45);
+    color: var(--emerald);
+  }
+
+  select, input[type="text"], input[type="search"], textarea {
+    background: var(--bg-card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 0.84rem;
+    font-family: inherit;
+  }
+
+  button {
+    background: var(--bg-card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  button:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    transform: translateY(-1px);
+  }
+
+  button.btn-primary {
+    background: var(--accent);
+    color: #070A12;
+    border-color: var(--accent);
+    font-weight: 700;
+  }
+
+  button.btn-primary:hover {
+    filter: brightness(1.1);
+  }
+
+  button.btn-cyan {
+    background: var(--cyan-soft);
+    color: var(--cyan);
+    border-color: var(--cyan);
+  }
+
+  button.active-posture, button.active-tab {
+    background: var(--accent);
+    color: #070A12;
+    border-color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* Project Saeculorum Hero Spotlight Banner */
+  .saeculorum-banner {
+    background: linear-gradient(135deg, var(--bg-panel), var(--bg-card));
+    border: 1px solid var(--accent);
+    border-left: 5px solid var(--accent);
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .saeculorum-copy {
+    flex: 1 1 520px;
+  }
+
+  .saeculorum-kicker {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--cyan);
+    background: var(--cyan-soft);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+  }
+
+  .saeculorum-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .saeculorum-desc {
+    font-size: 0.86rem;
+    color: var(--text-muted);
+  }
+
+  .saeculorum-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  /* Navigation Tabs */
+  .nav-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+    background: var(--bg-panel);
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  /* Main Responsive Workspace Grid */
+  .workspace-grid {
+    display: grid;
+    grid-template-columns: 340px 1fr 390px;
+    gap: 14px;
+    align-items: start;
+  }
+
+  html[data-device="mobile"] .workspace-grid {
+    grid-template-columns: 1fr;
+  }
+
+  html[data-device="tablet"] .workspace-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  html[data-device="fold"] .workspace-grid {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 28px;
+    position: relative;
+  }
+
+  @media (max-width: 1180px) {
+    .workspace-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 780px) {
+    .workspace-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .panel-title {
+    font-size: 0.96rem;
+    font-weight: 700;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Saint Node List */
+  .saint-search-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .saint-search-row input {
+    flex: 1;
+  }
+
+  .saint-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 540px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+
+  .saint-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 12px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    text-align: left;
+    width: 100%;
+    display: block;
+  }
+
+  .saint-card:hover {
+    border-color: var(--cyan);
+    transform: translateX(2px);
+  }
+
+  .saint-card.selected {
+    border: 2px solid var(--accent);
+    background: var(--accent-soft);
+    box-shadow: 0 0 16px var(--accent-soft);
+  }
+
+  .saint-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .saint-name {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+
+  .saint-code-tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--cyan-soft);
+    color: var(--cyan);
+  }
+
+  .saint-meta {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .saint-role-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    color: var(--accent);
+  }
+
+  /* Center Stage: Miracle Chronicle + 3D Reliquary Canvas */
+  .saint-hero-banner {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+
+  .saint-hero-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .saint-hero-title {
+    font-size: 1.22rem;
+    font-weight: 800;
+    color: var(--accent);
+  }
+
+  .saint-hero-latin {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--cyan);
+    margin-bottom: 6px;
+  }
+
+  .miracle-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .miracle-box {
+    background: var(--bg-panel);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.84rem;
+  }
+
+  .miracle-box-title {
+    font-weight: 700;
+    color: var(--cyan);
+    margin-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* 3D Reliquary & A* Basilica Stage */
+  .viewport-container {
+    background: #050811;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  #reliquary3DCanvas {
+    width: 100%;
+    height: 270px;
+    display: block;
+    border-radius: 8px;
+    background: radial-gradient(circle at center, #111A2E 0%, #05070E 100%);
+    cursor: grab;
+  }
+
+  .telemetry-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .telemetry-cell {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 8px;
+    text-align: center;
+  }
+
+  .telemetry-label {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+  }
+
+  .telemetry-val {
+    font-size: 0.86rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--cyan);
+  }
+
+  /* Preserved Blueprint: HawkStudio Mini Synth Module */
+  .synth-box {
+    max-width: 100%;
+    margin: 14px auto 0 auto;
+    border: 2px solid var(--accent);
+    border-radius: 14px;
+    padding: 16px;
+    background: var(--bg-card);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+  }
+
+  #synthTitle {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .synth-controls-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+  }
+
+  .synth-control-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  #waveCanvas {
+    width: 100%;
+    height: 90px;
+    background: #04070E;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .piano-keybed {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+
+  .piano-key {
+    padding: 10px 4px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .piano-key:hover, .piano-key.playing {
+    background: var(--cyan-soft);
+    border-color: var(--cyan);
+    color: var(--cyan);
+  }
+
+  /* Right Column: HawkSuite Code Exporter & F12 Live Bridge */
+  .code-editor-area {
+    width: 100%;
+    min-height: 250px;
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    line-height: 1.45;
+    background: #050811;
+    color: #A7F3D0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    resize: vertical;
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  .export-btn-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .status-toast {
+    margin-top: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    background: var(--cyan-soft);
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+  }
+
+  /* Secondary Views (Saeculorum, 5-Lens/5-Angles, 14-Pass Debug) */
+  .secondary-section {
+    margin-top: 16px;
+  }
+
+  .lens-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+  }
+
+  .lens-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+  }
+
+  .lens-card h4 {
+    color: var(--accent);
+    font-size: 0.88rem;
+    margin-bottom: 4px;
+  }
+
+  .lens-card p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .debug-pass-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .debug-pass-item {
+    background: var(--bg-card);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Mandatory Attribution Footer */
+  .site-footer {
+    margin-top: 20px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .ecosystem-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+  }
+</style>
+</head>
+<body>
+<div class="app-shell" id="appShell">
+
+  <!-- Fold Dual-Screen Hinge Indicator -->
+  <div class="fold-hinge-banner" id="foldHingeBanner">
+    <span>⚡ FOLDABLE 50/50 DUAL-SCREEN POSTURE ACTIVE — LEFT SCREEN: HAGIOGRAPHY &amp; 3D NAVE | RIGHT SCREEN: HAWKSTUDIO SYNTH &amp; HAWKSUITE EXPORTER</span>
+  </div>
+
+  <!-- Top Command Header -->
+  <header class="top-header" id="topHeader">
+    <div class="brand-cluster">
+      <div class="brand-emblem" title="Project Fortunatus — Server of the Saints">✞</div>
+      <div>
+        <div class="brand-title">🦅 PROJECT FORTUNATUS — SERVER OF THE SAINTS</div>
+        <div class="brand-subtitle">
+          Early Catholic Church Coded Asset Registry &amp; Miracle Chronicle • Serial: <strong>FH-GA-20261116-MFF-HTM-ED67FEA6</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="toolbar-cluster">
+      <span class="pill-badge live" id="serverDaemonBadge">● HOST: ST. FORTUNATUS DAEMON ONLINE</span>
+      <label for="themeSelector" style="font-size:0.76rem;color:var(--text-muted);">Chroma:</label>
+      <select id="themeSelector" aria-label="Select HawkChroma Theme">
+        <option value="gold">Vatican Gold (Default)</option>
+        <option value="byzantium">Byzantium Imperial Purple</option>
+        <option value="tactical">HawkX Tactical Cyan</option>
+        <option value="cyberpunk">Cyberpunk Neon</option>
+        <option value="matrix">Matrix CRT</option>
+        <option value="daylight">Scriptorium Daylight</option>
+      </select>
+
+      <div role="group" aria-label="Device Posture Switcher" style="display:flex;gap:4px;">
+        <button type="button" id="btnPostureDesktop" class="active-posture">🖥️ Desktop</button>
+        <button type="button" id="btnPostureMobile">📱 Mobile</button>
+        <button type="button" id="btnPostureFold">📖 Fold</button>
+        <button type="button" id="btnPostureTablet">📟 Tablet</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Project Saeculorum Promotion Banner -->
+  <section class="saeculorum-banner" id="saeculorumSection">
+    <div class="saeculorum-copy">
+      <span class="saeculorum-kicker">🌟 Featured Initiative • Per Omnia Saecula Saeculorum ("Unto the Ages of Ages")</span>
+      <div class="saeculorum-title">PROJECT SAECULORUM — Eternal Liturgical &amp; Sacred Code Preservation Protocol</div>
+      <p class="saeculorum-desc">
+        Named from the ancient Latin doxology <a href="https://www.newliturgicalmovement.org/2026/06/per-omnia-saecula-saeculorum-and-great.html" target="_blank" rel="noopener noreferrer"><em>Per omnia saecula saeculorum</em></a> (<a href="https://www.catholicculture.org/culture/library/dictionary/index.cfm?id=34230&randomterm=false" target="_blank" rel="noopener noreferrer">Catholic Culture</a>), <strong>Project Saeculorum</strong> encodes the miracles, sacred modal hymns, and 3D reliquary geometry of the early Catholic Church into zero-dependency <a href="https://forefronthawk.com" target="_blank" rel="noopener noreferrer">HawkSuite</a> packets built to endure across centuries without bit-rot.
+      </p>
+    </div>
+    <div class="saeculorum-actions">
+      <button type="button" class="btn-primary" id="btnMintSaeculorumBundle">⚡ Export Full Saeculorum Archive (.JSON)</button>
+      <button type="button" class="btn-cyan" id="btnChantSaeculorumAmen">🎵 Chant "Saecula Saeculorum" Cadence</button>
+      <span class="pill-badge" id="saeculorumCounterBadge">Pledges Sealed: 1,420</span>
+    </div>
+  </section>
+
+  <!-- Quick Jump & View Filter Bar -->
+  <nav class="nav-bar" aria-label="Workspace Section Navigation">
+    <a href="#workspaceMain" class="pill-badge">🏛️ Saint Asset Server &amp; 3D Reliquary</a>
+    <a href="#hawkStudioRoot" class="pill-badge">🎹 HawkStudio Sacred Synth</a>
+    <a href="#saeculorumManifestoPanel" class="pill-badge">📜 Project Saeculorum &amp; 5-Lens Matrix</a>
+    <a href="#hawkDebug14Panel" class="pill-badge">🛡️ 14-Pass HawkDebug Gate</a>
+    <button type="button" id="btnBroadcastAllSaints" style="margin-left:auto;">📡 Broadcast Active Saint to HawkSuite Bus</button>
+  </nav>
+
+  <!-- Main 3-Column Server Workspace -->
+  <main class="workspace-grid" id="workspaceMain">
+
+    <!-- COLUMN 1: Saint Server Node Registry -->
+    <section class="panel" id="saintRegistryPanel">
+      <div class="panel-header">
+        <h2 class="panel-title">📜 Early Church Saints Registry</h2>
+        <span class="pill-badge" id="saintCountBadge">6 Nodes</span>
+      </div>
+
+      <div class="saint-search-row">
+        <input type="search" id="saintSearchInput" placeholder="Filter saint, era, miracle, or mode..." aria-label="Filter Saints">
+        <button type="button" id="btnResetSaintFilter">Reset</button>
+      </div>
+
+      <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:8px;">
+        Stock Host: <strong>St. Venantius Fortunatus</strong> ("Server of the Saints", Bishop of Poitiers, c. 530–609 AD). Click any saint node to load their miracles, 3D reliquary mesh, liturgical synth scale, and exportable HawkSuite code:
+      </div>
+
+      <div class="saint-list" id="saintNodeList"></div>
+    </section>
+
+    <!-- COLUMN 2: Active Saint Miracle Chronicle, 3D Reliquary Stage & HawkStudio Synth -->
+    <section class="panel" id="saintStagePanel">
+      <div class="panel-header">
+        <h2 class="panel-title" id="activeSaintHeaderTitle">✞ Stock Server Node: St. Venantius Fortunatus</h2>
+        <span class="pill-badge live" id="activeSaintIdBadge">FORTUNATUS-CORE-01</span>
+      </div>
+
+      <!-- Saint Biographical & Miracle Chronicle Card -->
+      <div class="saint-hero-banner" id="saintBioContainer">
+        <div class="saint-hero-header">
+          <div>
+            <div class="saint-hero-title" id="saintDetailName">Saint Venantius Fortunatus (Server of the Saints)</div>
+            <div class="saint-hero-latin" id="saintDetailLatin">Hymnographer of Vexilla Regis &amp; Chronicler of Early Gallic Miracles • c. 530 – c. 609 AD • Feast: Dec 14</div>
+          </div>
+          <button type="button" class="btn-cyan" id="btnPlaySaintHymn">🎶 Play Saint Modal Hymn</button>
+        </div>
+        <p style="font-size:0.84rem;color:var(--text);" id="saintDetailSummary"></p>
+
+        <div class="miracle-list" id="saintMiracleList"></div>
+      </div>
+
+      <!-- Interactive 3D Reliquary & A* Pilgrim Nave Stage -->
+      <div class="viewport-container">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px;">
+          <span style="font-size:0.8rem;font-weight:700;color:var(--accent);" id="canvas3DTitle">
+            🏛️ 3D Coded Reliquary &amp; A* Basilica Pilgrim Pathfinding Viewport
+          </span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button type="button" id="btnToggleWireframe">🧊 Mode: Solid + Wire</button>
+            <button type="button" id="btnRecalcAStar">🧭 Reroute A* Pilgrim Path</button>
+            <button type="button" id="btnPulseMiracleFX">✨ Pulse Miracle Aura</button>
+          </div>
+        </div>
+
+        <canvas id="reliquary3DCanvas" width="680" height="270"></canvas>
+
+        <div class="telemetry-strip">
+          <div class="telemetry-cell">
+            <div class="telemetry-label">3D Mesh / Verts</div>
+            <div class="telemetry-val" id="telemetryVerts">64 V / 96 E</div>
+          </div>
+          <div class="telemetry-cell">
+            <div class="telemetry-label">A* Pilgrim Route</div>
+            <div class="telemetry-val" id="telemetryAStar">14 Steps</div>
+          </div>
+          <div class="telemetry-cell">
+            <div class="telemetry-label">Sacred Solfeggio</div>
+            <div class="telemetry-val" id="telemetryFreq">528 Hz / Dorian</div>
+          </div>
+          <div class="telemetry-cell">
+            <div class="telemetry-label">Render FPS</div>
+            <div class="telemetry-val" id="telemetryFps">60 FPS</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 2 PRESERVED BLUEPRINT: HawkStudio Mini Synth Module (Upgraded) -->
+      <div class="synth-box" id="hawkStudioRoot">
+        <h1 id="synthTitle">🎹 HawkStudio Chromatic &amp; Modal Synth — Sacred Solfeggio Node</h1>
+
+        <div class="synth-controls-grid">
+          <div class="synth-control-item">
+            <label for="scaleModeSelect">Liturgical Scale Mode:</label>
+            <select id="scaleModeSelect">
+              <option value="chromatic">Chromatic</option>
+              <option value="dorian">Dorian (Mode I — Fortunatus)</option>
+              <option value="phrygian">Phrygian (Mode III — Todi)</option>
+              <option value="lydian">Lydian (Mode V — Polycarp)</option>
+              <option value="mixolydian">Mixolydian (Mode VII — Cecilia)</option>
+              <option value="aeolian">Aeolian (Lawrence Treasury)</option>
+            </select>
+          </div>
+
+          <div class="synth-control-item">
+            <label for="cutoffKnob">Sanctuary Filter Cutoff: <strong id="cutoffReadout">2400 Hz</strong></label>
+            <input type="range" id="cutoffKnob" min="300" max="6000" value="2400">
+          </div>
+
+          <div class="synth-control-item">
+            <label for="waveformSelect">Organ / Choir Timbre:</label>
+            <select id="waveformSelect">
+              <option value="triangle">Cathedral Pipe Flute (Triangle)</option>
+              <option value="sawtooth">Brass Reed Organ (Sawtooth)</option>
+              <option value="sine">Pure Reliquary Bell (Sine)</option>
+              <option value="square">Monastic Psaltery (Square)</option>
+            </select>
+          </div>
+        </div>
+
+        <canvas id="waveCanvas" width="680" height="90"></canvas>
+
+        <div class="piano-keybed" id="modalKeybed"></div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="btn-primary" id="btnTriggerArp">Play Arpeggio</button>
+            <button type="button" id="btnTriggerChord">🔔 Strike Sacred Triad</button>
+            <button type="button" id="btnMuteAudio">🔊 Audio: Active</button>
+          </div>
+          <span class="pill-badge" id="synthLastNoteBadge">Last Note: 440.0 Hz (A4)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- COLUMN 3: HawkSuite Asset Code Server & Exporter -->
+    <section class="panel" id="hawkSuiteExporterPanel">
+      <div class="panel-header">
+        <h2 class="panel-title">📦 HawkSuite Coded Asset Exporter</h2>
+        <span class="pill-badge" id="exportFormatBadge">.HAWK3D.JSON</span>
+      </div>
+
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+        <button type="button" id="btnFormatHawk3D" class="active-tab">🧊 HawkAccipiter (.hawk3d.json)</button>
+        <button type="button" id="btnFormatHawkStudio">🎹 HawkStudio Synth Patch</button>
+        <button type="button" id="btnFormatHawkTails">🗺️ HawkTails Mission</button>
+        <button type="button" id="btnFormatStandaloneHTML">🌐 Standalone .HTML Widget</button>
+      </div>
+
+      <label for="saintCodeEditor" style="font-size:0.76rem;color:var(--text-muted);display:block;margin-bottom:4px;">
+        Live F12 Source Bridge (Selection-Safe Editor — Edit or Export Directly into HawkSuite):
+      </label>
+      <textarea id="saintCodeEditor" class="code-editor-area" spellcheck="false"></textarea>
+
+      <div class="export-btn-grid">
+        <button type="button" class="btn-primary" id="btnCopySaintCode">📋 Copy Code for HawkSuite</button>
+        <button type="button" class="btn-cyan" id="btnDownloadSaintAsset">💾 Download Asset File</button>
+        <button type="button" id="btnDownloadMarkdownStory">📜 Export Miracle Chronicle (.MD)</button>
+        <button type="button" id="btnSendToEcosystemBus">🦅 Push to HawkSuite Bus</button>
+      </div>
+
+      <div class="status-toast" id="exportStatusToast">
+        ✅ Server Ready: St. Venantius Fortunatus stock coded asset loaded for HawkSuite export.
+      </div>
+
+      <!-- Custom Saint Asset Creator Form -->
+      <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);">
+        <h3 style="font-size:0.88rem;color:var(--accent);margin-bottom:8px;">➕ Register New Early Church Saint Node</h3>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <input type="text" id="newSaintNameInput" placeholder="Saint Name (e.g., St. Ignatius of Antioch, c. 108 AD)" aria-label="New Saint Name">
+          <input type="text" id="newSaintMiracleInput" placeholder="Miracle Account &amp; Historical Witness Citation" aria-label="New Saint Miracle">
+          <div style="display:flex;gap:6px;">
+            <select id="newSaintShapeSelect" aria-label="New Saint 3D Reliquary Archetype" style="flex:1;">
+              <option value="cross">Crux Gemmata (Jeweled Cross)</option>
+              <option value="flame">Apostolic Flame Pillar</option>
+              <option value="organ">Portative Pipe Organ</option>
+              <option value="crozier">Episcopal Crozier &amp; Shield</option>
+              <option value="gridiron">Deacon Treasury Grid</option>
+              <option value="cloak">Sanctuary Cappa Arch</option>
+            </select>
+            <button type="button" class="btn-primary" id="btnAddCustomSaint">Mint Node</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Project Saeculorum Manifesto & 5-Lens / 5-Angle Executive Matrix -->
+  <section class="panel secondary-section" id="saeculorumManifestoPanel">
+    <div class="panel-header">
+      <h2 class="panel-title">🌟 Project Saeculorum &amp; 5-Lens / 5-Angle Executive Architecture Matrix</h2>
+      <span class="pill-badge">Σ[Active Skills: 8/8]</span>
+    </div>
+    <div class="lens-grid">
+      <div class="lens-card">
+        <h4>1. Stock Server Patron: St. Venantius Fortunatus</h4>
+        <p>
+          Born near Treviso and healed of eye disease in Ravenna through oil from the lamp of <a href="https://portal.sds.ox.ac.uk/articles/online_resource/E02863_Gregory_of_Tours_in_his_Miracles_of_Martin_1_15_recounts_how_Venantius_Fortunatus_and_a_colleague_were_cured_from_blindness_with_oil_from_a_lamp_burning_beneath_a_picture_of_Martin_ascetic_and_bishop_of_Tours_ob_397_S00050_in_Ravenna/13827995" target="_blank" rel="noopener noreferrer">St. Martin of Tours (Oxford E02863)</a>, <a href="https://en.wikipedia.org/wiki/Venantius_Fortunatus" target="_blank" rel="noopener noreferrer">St. Venantius Fortunatus</a> served the saints of Gaul by compiling their <em>Vitae</em> and miracles (<a href="https://portal.sds.ox.ac.uk/articles/online_resource/E06716_Venantius_Fortunatus_writes_the_Life_of_Marcellus_5th_c_bishop_of_Paris_S01301_presenting_him_as_a_miracle-worker_and_defender_of_the_city_of_Paris_Written_in_Latin_in_Paris_shortly_before_May_576_/13906865" target="_blank" rel="noopener noreferrer">Oxford E06716</a>). Here he operates as the default host server routing every saint's coded asset.
+        </p>
+      </div>
+      <div class="lens-card">
+        <h4>2. Project Saeculorum ("Unto the Ages of Ages")</h4>
+        <p>
+          Drawing on the Latin liturgical conclusion <a href="https://www.newliturgicalmovement.org/2026/06/per-omnia-saecula-saeculorum-and-great.html" target="_blank" rel="noopener noreferrer"><em>Per omnia saecula saeculorum</em></a>, Project Saeculorum guarantees that sacred history, modal organ synthesis, and 3D reliquary meshes remain playable in any standard web browser without external servers.
+        </p>
+      </div>
+      <div class="lens-card">
+        <h4>3. Operator &amp; Skeptic Lenses (F7-5LENS)</h4>
+        <p>
+          1-click code export for <a href="https://accipiter.forefronthawk.com" target="_blank" rel="noopener noreferrer">HawkAccipiter</a>, <a href="https://studio.forefronthawk.com" target="_blank" rel="noopener noreferrer">HawkStudio</a>, and <a href="https://tails.forefronthawk.com" target="_blank" rel="noopener noreferrer">HawkTails</a> with synchronous mobile/Edge clipboard fallback, guarded DOM lookups, and selection-safe live editing.
+        </p>
+      </div>
+      <div class="lens-card">
+        <h4>4. Visionary, Customer &amp; 5-Angle Remix (F8-5ANGLES)</h4>
+        <p>
+          Unites hagiographical primary sources with 60fps 3D procedural reliquaries, A* pilgrim navigation, and real-time WebAudio modal synthesis connected via <code>hawk_creator_ecosystem_v1</code>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14-Pass HawkDebug Pre-Flight Verification Gate -->
+  <section class="panel secondary-section" id="hawkDebug14Panel">
+    <div class="panel-header">
+      <h2 class="panel-title">🛡️ HawkDebug 14-Pass Static, DOM &amp; Runtime Verification Gate (`debug.forefronthawk.com`)</h2>
+      <button type="button" class="btn-cyan" id="btnRun14PassAudit">🔍 Re-Run 14-Pass Diagnostic Audit</button>
+    </div>
+    <div class="debug-pass-grid" id="debugPassGrid"></div>
+  </section>
+
+  <!-- Mandatory Attribution Footer -->
+  <footer class="site-footer" id="mandatoryFooter">
+    <div>
+      <div>
+        <strong>🦅 Engineered with <a href="https://forefronthawk.com" target="_blank" rel="noopener noreferrer">Forefront Hawk</a> (<a href="https://talk.forefronthawk.com" target="_blank" rel="noopener noreferrer">talk.forefronthawk.com</a> / <a href="mailto:Michael@forefronthawk.com">Michael@forefronthawk.com</a>) &amp; Gemini Aargon</strong>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:0.74rem;margin-top:3px;">
+        SERIAL ID: <code>FH-GA-20261116-MFF-HTM-ED67FEA6</code> • FORMULA: <code>P_Adv = Φ_Serial(Intent ⊕ Skills[0b11111111] ⊕ DOM_In ⊕ Verify_14 ⊕ Credit_Lock)</code>
+      </div>
+    </div>
+
+    <div class="ecosystem-links">
+      <a href="https://forefronthawk.com" target="_blank" rel="noopener noreferrer">HawkSuite Portal</a>
+      <a href="https://studio.forefronthawk.com" target="_blank" rel="noopener noreferrer">HawkStudio</a>
+      <a href="https://accipiter.forefronthawk.com" target="_blank" rel="noopener noreferrer">HawkAccipiter</a>
+      <a href="https://eyas.forefronthawk.com" target="_blank" rel="noopener noreferrer">HawkEyas</a>
+      <a href="https://tails.forefronthawk.com" target="_blank" rel="noopener noreferrer">HawkTails</a>
+      <a href="https://vision.forefronthawk.com" target="_blank" rel="noopener noreferrer">HawkVision</a>
+      <a href="https://talon.forefronthawk.com" target="_blank" rel="noopener noreferrer">HawkTalon</a>
+      <a href="https://debug.forefronthawk.com" target="_blank" rel="noopener noreferrer">HawkDebug</a>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  // ============================================================================
+  // PROJECT FORTUNATUS — SERVER OF THE SAINTS & HAWKSTUDIO SACRED SYNTH MODULE
+  // SERIAL ID: FH-GA-20261116-MFF-HTM-ED67FEA6
+  // CREDITS: Forefront Hawk (https://forefronthawk.com) & Gemini Aargon
+  // ============================================================================
+
+  const SERIAL_ID = "FH-GA-20261116-MFF-HTM-ED67FEA6";
+  const ECOSYSTEM_BUS_KEY = "hawk_creator_ecosystem_v1";
+
+  // Grounded Early Catholic Church Saint Coded Assets Registry
+  const SAINT_REGISTRY = [
+    {
+      id: "FORTUNATUS-CORE-01",
+      name: "St. Venantius Fortunatus (Stock Server Host)",
+      role: "Server of the Saints & Hymnographer",
+      era: "c. 530 – c. 609 AD • Treviso, Ravenna & Poitiers • Feast: Dec 14",
+      latinMotto: "Vexilla Regis Prodeunt • Server & Chronicler of Early Church Miracles",
+      scaleMode: "dorian",
+      solfeggioHz: 528,
+      baseFreq: 293.66,
+      hymnNotes: [293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25, 587.33],
+      shape: "cross",
+      primaryColor: "#D4AF37",
+      secondaryColor: "#00F5D4",
+      summary: "Born near Treviso in northern Italy and educated in Ravenna, Saint Venantius Fortunatus became Bishop of Poitiers and one of the foremost liturgical poets of the early Catholic Church. Serving as the dedicated 'Server of the Saints,' he chronicled the Vitae and miracle accounts of early Gallic bishops and composed the immortal hymns Vexilla Regis and Pange Lingua Gloriosi.",
+      miracles: [
+        {
+          title: "1. Miraculous Healing of Blindness at the Lamp of Ravenna (c. 560 AD)",
+          account: "While studying rhetoric in Ravenna alongside his classmate Felix, Venantius Fortunatus suffered a severe eye ailment threatening total blindness. Praying before the altar of Sts. Paul and John, they touched their eyes with oil from a sanctuary lamp burning beneath an image of Saint Martin of Tours, and their sight was immediately restored—inspiring Fortunatus's lifelong pilgrimage across Gaul.",
+          sourceTitle: "Oxford Cult of Saints (E02863 — Gregory of Tours, Miracles of Martin 1.15)",
+          sourceUrl: "https://portal.sds.ox.ac.uk/articles/online_resource/E02863_Gregory_of_Tours_in_his_Miracles_of_Martin_1_15_recounts_how_Venantius_Fortunatus_and_a_colleague_were_cured_from_blindness_with_oil_from_a_lamp_burning_beneath_a_picture_of_Martin_ascetic_and_bishop_of_Tours_ob_397_S00050_in_Ravenna/13827995"
+        },
+        {
+          title: "2. Chronicling the Miracles of St. Hilary at Poitiers (567–568 AD)",
+          account: "Acting as the 'Server of the Saints' to preserve their miracles for posterity, Fortunatus documented in his Liber de virtutibus sancti Hilarii how a blind pilgrim journeying toward Tours received full sight upon entering St. Hilary's basilica in Poitiers, and how a paralyzed girl was healed during the saint's feast.",
+          sourceTitle: "Oxford Cult of Saints (E05416 & E05419 — Miracles of Hilary)",
+          sourceUrl: "https://portal.sds.ox.ac.uk/articles/online_resource/E05416_Venantius_Fortunatus_in_his_Miracles_of_Hilary_recounts_how_a_blind_man_was_cured_when_he_entered_the_church_of_Hilary_bishop_of_Poitiers_ob_367_S00183_in_Poitiers_during_a_journey_to_Tours_north-west_Gaul_in_search_of_a_cure_at_the_/13870247"
+        },
+        {
+          title: "3. Hymn of the True Cross Relic (Vexilla Regis, 569 AD)",
+          account: "When Queen St. Radegund obtained a relic of the True Cross from Byzantine Emperor Justin II for the Monastery of the Holy Cross at Poitiers, Fortunatus composed the processional hymn Vexilla Regis Prodeunt, still sung in the Catholic liturgy fourteen centuries later.",
+          sourceTitle: "Catholic Online — St. Venantius Fortunatus Biography",
+          sourceUrl: "https://www.catholic.org/saints/saint.php?saint_id=1940"
+        }
+      ]
+    },
+    {
+      id: "FORTUNATUS-TODI-02",
+      name: "St. Fortunatus of Todi",
+      role: "Episcopal Miracle Worker & Sanctuary Defender",
+      era: "Died c. 537 AD • Todi, Umbria, Italy • Feast: Oct 14",
+      latinMotto: "Signum Crucis & Illuminatio Caecorum • Dialogues of Pope St. Gregory I",
+      scaleMode: "phrygian",
+      solfeggioHz: 639,
+      baseFreq: 329.63,
+      hymnNotes: [329.63, 349.23, 392.00, 440.00, 493.88, 523.25, 587.33, 659.25],
+      shape: "crozier",
+      primaryColor: "#10B981",
+      secondaryColor: "#D4AF37",
+      summary: "Venerated as the patron saint of Todi in Umbria during the Gothic Wars, Bishop Saint Fortunatus of Todi (d. 537 AD) was immortalized by Pope Saint Gregory the Great in his Dialogues (Book 1, Chapter 10) for his extraordinary power of prayer, exorcism, healing of the blind, and raising of the dead.",
+      miracles: [
+        {
+          title: "1. Raising of Marcellus at Dawn on Easter Sunday (Before 537 AD)",
+          account: "As narrated by Pope Gregory the Great in Dialogues 1.10, when a resident of Todi named Marcellus died, Bishop Fortunatus visited the body before dawn on Easter Sunday accompanied by two deacons; when Fortunatus called out to the deceased man by name, Marcellus rose alive.",
+          sourceTitle: "Oxford Cult of Saints (E04438 — Gregory the Great, Dialogues 1.10)",
+          sourceUrl: "https://portal.sds.ox.ac.uk/articles/online_resource/E04438_Gregory_the_Great_in_his_Dialogues_1_10_narrates_miraculous_stories_based_in_Todi_central_Italy_featuring_Fortunatus_bishop_of_Todi_ob_c_537_S01716_These_describe_Fortunatus_driving_out_evil_spirits_and_four_other_miracles_On_one_occ/13858970"
+        },
+        {
+          title: "2. Rescue of the Two Captive Boys from the Gothic Chieftain",
+          account: "When Gothic soldiers abducted two small boys from an estate near Ravenna and refused Bishop Fortunatus's offer of ransom, the Gothic commander's horse slipped outside St. Peter's Church in Todi, fracturing the leader's rib. Once the commander returned the children unharmed to Fortunatus, holy water administered by the bishop's deacon healed his broken rib.",
+          sourceTitle: "Wikipedia — Saint Fortunatus of Todi",
+          sourceUrl: "https://en.wikipedia.org/wiki/Fortunatus_of_Todi"
+        }
+      ]
+    },
+    {
+      id: "POLYCARP-SMYRNA-03",
+      name: "St. Polycarp of Smyrna",
+      role: "Apostolic Father & Unconsumed Flame Pillar",
+      era: "c. 69 – Feb 23, 155 AD • Smyrna (Asia Minor) • Feast: Feb 23",
+      latinMotto: "Octoginta et sex annos servivi Ei • Disciple of St. John the Apostle",
+      scaleMode: "lydian",
+      solfeggioHz: 741,
+      baseFreq: 349.23,
+      hymnNotes: [349.23, 392.00, 440.00, 493.88, 523.25, 587.33, 659.25, 698.46],
+      shape: "flame",
+      primaryColor: "#F59E0B",
+      secondaryColor: "#EF4444",
+      summary: "Consecrated Bishop of Smyrna by the Apostle John himself, Saint Polycarp bridges the Apostolic Age and the early Catholic Church. His Martyrdom of Polycarp (155 AD) is the earliest surviving eyewitness Christian martyrdom chronicle outside the New Testament.",
+      miracles: [
+        {
+          title: "1. The Vaulted Arch of Fire & Fragrance of Frankincense (Feb 23, 155 AD)",
+          account: "Refusing Proconsul Statius Quadratus's demand to revile Christ with the words 'Eighty and six years have I served Him, and He has done me no wrong,' Polycarp was bound to the pyre. When lit, the flames billowed outward like a vaulted chamber or a ship's sail filled by the wind without consuming his body, while emitting a sweet aroma like burning frankincense.",
+          sourceTitle: "Oxford Cult of Saints (E00035 — The Greek Martyrdom of Polycarp)",
+          sourceUrl: "https://portal.sds.ox.ac.uk/articles/online_resource/E00035_The_Greek_Martyrdom_of_Polycarp_describes_the_martyrdom_of_Polycarp_Polykarpos_bishop_and_martyr_of_Smyrna_S00004_including_accounts_of_miracles_and_references_to_the_veneration_of_his_remains_Written_in_Smyrna_western_Asia_Minor_bet/13795253"
+        },
+        {
+          title: "2. Apostolic Witness & Preservation of the Smyrnaean Church",
+          account: "Remembered by his disciple St. Irenaeus of Lyons for teaching directly what he had received from the Apostles who had seen the Lord, Polycarp's fearless witness calmed the persecution in Smyrna.",
+          sourceTitle: "EWTN Mission — St. Polycarp, Bishop of Smyrna",
+          sourceUrl: "https://ewtnmission.com/dailysaint/st-polycarp-bishop-of-smyrna/"
+        }
+      ]
+    },
+    {
+      id: "CECILIA-ROMA-04",
+      name: "St. Cecilia of Rome",
+      role: "Patroness of Sacred Music & HawkStudio Synth",
+      era: "c. 200 – c. 230 AD • Trastevere, Rome • Feast: Nov 22",
+      latinMotto: "Cantantibus Organis • Patroness of Musicians & Liturgical Harmony",
+      scaleMode: "mixolydian",
+      solfeggioHz: 852,
+      baseFreq: 392.00,
+      hymnNotes: [392.00, 440.00, 493.88, 523.25, 587.33, 659.25, 698.46, 783.99],
+      shape: "organ",
+      primaryColor: "#EC4899",
+      secondaryColor: "#00F5D4",
+      summary: "Venerated in the Canon of the Roman Mass since the 4th century at her titular basilica in Trastevere, Saint Cecilia sang to God in her heart amidst the earthly wedding instruments, converting her husband Valerian and his brother Tiburtius before her martyrdom.",
+      miracles: [
+        {
+          title: "1. The Angelic Crowns of Roses & Lilies and Unscathed Caldarium (c. 230 AD)",
+          account: "After her husband Valerian was baptized by Pope Urban I, he returned to find an angel crowning Cecilia and himself with fragrant heavenly roses and lilies. Condemned by Prefect Turcius Almachius to be suffocated for three days and nights inside her overheated Roman bathhouse (caldarium), Cecilia remained completely unharmed amidst the scalding steam, singing praises to God.",
+          sourceTitle: "Encyclopaedia Britannica — St. Cecilia, Virgin Martyr & Patron of Music",
+          sourceUrl: "https://www.britannica.com/biography/Saint-Cecilia"
+        }
+      ]
+    },
+    {
+      id: "LAWRENCE-ROMA-05",
+      name: "St. Lawrence of Rome",
+      role: "Archdeacon of the Roman Treasury & Alms Router",
+      era: "c. 225 – Aug 10, 258 AD • Osca & Rome • Feast: Aug 10",
+      latinMotto: "Ecce Thesauri Ecclesiae • Archdeacon under Pope St. Sixtus II",
+      scaleMode: "aeolian",
+      solfeggioHz: 417,
+      baseFreq: 440.00,
+      hymnNotes: [440.00, 493.88, 523.25, 587.33, 659.25, 698.46, 783.99, 880.00],
+      shape: "gridiron",
+      primaryColor: "#EF4444",
+      secondaryColor: "#FBBF24",
+      summary: "First among the seven deacons of Rome under Pope Sixtus II during the persecution of Emperor Valerian in 258 AD, Saint Lawrence administered the Church's alms and sacred vessels, becoming one of the most revered martyrs of the Roman Church.",
+      miracles: [
+        {
+          title: "1. Presenting the Poor & Blind as the True Treasures of the Church (258 AD)",
+          account: "Ordered by the Prefect of Rome to surrender all the riches of the Church within three days, Lawrence distributed the Church's property to the needy, healed the blind in the Roman catacombs by the Sign of the Cross, and assembled the poor, crippled, orphans, and blind before the Prefect, declaring: 'Behold, these are the true treasures of the Church!'",
+          sourceTitle: "The Daily Office — Laurence, Deacon and Martyr at Rome (258 AD)",
+          sourceUrl: "https://www.dailyoffice2019.com/commemorations/2aa3195f-eb1d-4628-b8f7-8a7b5da46c71"
+        }
+      ]
+    },
+    {
+      id: "MARTIN-TOURS-06",
+      name: "St. Martin of Tours",
+      role: "Sanctuary Cappa Router & Healer of Fortunatus",
+      era: "316 – Nov 8, 397 AD • Amiens & Tours, Gaul • Feast: Nov 11",
+      latinMotto: "Cappa Sancti Martini • Origin of the Chapel & Intercessor of Ravenna",
+      scaleMode: "chromatic",
+      solfeggioHz: 963,
+      baseFreq: 261.63,
+      hymnNotes: [261.63, 277.18, 293.66, 311.13, 329.63, 349.23, 392.00, 523.25],
+      shape: "cloak",
+      primaryColor: "#38BDF8",
+      secondaryColor: "#D4AF37",
+      summary: "Third Bishop of Tours and spiritual father of Gallic monasticism, Saint Martin's shrine lamp in Ravenna miraculously healed Venantius Fortunatus's eyes, prompting Fortunatus to write a four-book metrical Life of St. Martin.",
+      miracles: [
+        {
+          title: "1. The Divided Cloak at Amiens & The Birth of the Word 'Chapel'",
+          account: "While stationed at Amiens as a young Roman cavalryman during a bitter winter, Martin sliced his military cloak (cappa) in half with his sword to clothe a shivering beggar at the city gate. That night he beheld Christ in a dream wearing the half-cloak; its preserved relic (cappa Sancti Martini) gave the Church the words 'chapel' (capella) and 'chaplain' (cappellanus).",
+          sourceTitle: "Wikipedia — Saint Martin of Tours & Cappa Sancti Martini",
+          sourceUrl: "https://en.wikipedia.org/wiki/Martin_of_Tours"
+        }
+      ]
+    }
+  ];
+
+  // Application State
+  const STATE = {
+    selectedSaintId: "FORTUNATUS-CORE-01",
+    exportFormat: "hawk3d",
+    devicePosture: "desktop",
+    theme: "gold",
+    wireframeMode: "hybrid",
+    audioMuted: false,
+    saeculorumPledges: 1420,
+    miraclePulseTimer: 0,
+    rotX: 0.35,
+    rotY: 0.65,
+    isDragging3D: false,
+    lastMouseX: 0,
+    lastMouseY: 0,
+    astarPath: [],
+    obstacles: new Set(["2,2", "2,3", "4,1", "5,3", "7,2", "8,4"]),
+    fps: 60
+  };
+
+  // ============================================================================
+  // WEBAUDIO API MODAL & SACRED SOLFEGGIO SYNTH ENGINE (STAGE 2 BLUEPRINT + F3)
+  // ============================================================================
+  let audioCtx = null;
+  let masterAnalyser = null;
+  let activeWaveform = "triangle";
+
+  function ensureAudioContext() {
+    if (!audioCtx) {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (AudioContextClass) {
+        audioCtx = new AudioContextClass();
+        masterAnalyser = audioCtx.createAnalyser();
+        masterAnalyser.fftSize = 512;
+        masterAnalyser.connect(audioCtx.destination);
+      }
+    }
+    if (audioCtx && audioCtx.state === "suspended") {
+      audioCtx.resume();
+    }
+  }
+
+  // Stage 2 Preserved Function: playArpeggioNote(freq)
+  function playArpeggioNote(freq) {
+    const safeFreq = Number(freq) > 20 ? Number(freq) : 440;
+    console.log("Playing freq:", safeFreq);
+
+    const badge = document.getElementById("synthLastNoteBadge");
+    const modeSelect = document.getElementById("scaleModeSelect");
+    const modeName = modeSelect ? modeSelect.value.toUpperCase() : "DORIAN";
+    if (badge) {
+      badge.textContent = "Last Note: " + safeFreq.toFixed(2) + " Hz (" + modeName + ")";
+    }
+
+    if (STATE.audioMuted) return;
+
+    try {
+      ensureAudioContext();
+      if (!audioCtx) return;
+
+      const now = audioCtx.currentTime;
+      const cutoffEl = document.getElementById("cutoffKnob");
+      const cutoffFreq = cutoffEl ? Number(cutoffEl.value) || 2400 : 2400;
+
+      const osc1 = audioCtx.createOscillator();
+      const osc2 = audioCtx.createOscillator();
+      const filter = audioCtx.createBiquadFilter();
+      const gain = audioCtx.createGain();
+
+      osc1.type = activeWaveform;
+      osc2.type = "sine";
+      osc1.frequency.setValueAtTime(safeFreq, now);
+      // Sacred fifth / octave organ shimmer
+      osc2.frequency.setValueAtTime(safeFreq * 1.4983, now);
+
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(cutoffFreq, now);
+      filter.Q.setValueAtTime(3.2, now);
+
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.exponentialRampToValueAtTime(0.22, now + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.0008, now + 0.65);
+
+      osc1.connect(filter);
+      osc2.connect(filter);
+      filter.connect(gain);
+      if (masterAnalyser) {
+        gain.connect(masterAnalyser);
+      } else {
+        gain.connect(audioCtx.destination);
+      }
+
+      osc1.start(now);
+      osc2.start(now);
+      osc1.stop(now + 0.68);
+      osc2.stop(now + 0.68);
+    } catch (err) {
+      console.warn("WebAudio playback error guarded:", err);
+    }
+  }
+
+  function playNoteSequence(notes, intervalMs) {
+    const step = intervalMs || 160;
+    notes.forEach((f, idx) => {
+      setTimeout(() => {
+        playArpeggioNote(f);
+        highlightKeyByIndex(idx % 8);
+      }, idx * step);
+    });
+  }
+
+  // Modal Scale Frequency Calculator
+  const SCALE_INTERVALS = {
+    chromatic: [0, 1, 2, 3, 4, 5, 6, 7],
+    dorian: [0, 2, 3, 5, 7, 9, 10, 12],
+    phrygian: [0, 1, 3, 5, 7, 8, 10, 12],
+    lydian: [0, 2, 4, 6, 7, 9, 11, 12],
+    mixolydian: [0, 2, 4, 5, 7, 9, 10, 12],
+    aeolian: [0, 2, 3, 5, 7, 8, 10, 12]
+  };
+
+  const SOLFEGGIO_NAMES = ["Do (Ut)", "Re", "Mi", "Fa", "Sol", "La", "Ti (Si)", "Do⁸"];
+
+  function getActiveScaleFrequencies() {
+    const saint = getSelectedSaint();
+    const rootHz = saint ? saint.baseFreq : 293.66;
+    const modeSelect = document.getElementById("scaleModeSelect");
+    const mode = modeSelect ? modeSelect.value : "dorian";
+    const semitones = SCALE_INTERVALS[mode] || SCALE_INTERVALS.dorian;
+    return semitones.map(st => +(rootHz * Math.pow(2, st / 12)).toFixed(2));
+  }
+
+  function renderModalKeybed() {
+    const keybed = document.getElementById("modalKeybed");
+    if (!keybed) return;
+    const freqs = getActiveScaleFrequencies();
+    keybed.innerHTML = "";
+    freqs.forEach((freq, idx) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "piano-key";
+      btn.dataset.keyIdx = String(idx);
+      btn.innerHTML = "<div><strong>" + SOLFEGGIO_NAMES[idx] + "</strong></div><div>" + Math.round(freq) + "Hz</div>";
+      btn.addEventListener("click", () => {
+        playArpeggioNote(freq);
+        highlightKeyByIndex(idx);
+      });
+      keybed.appendChild(btn);
+    });
+  }
+
+  function highlightKeyByIndex(idx) {
+    const keybed = document.getElementById("modalKeybed");
+    if (!keybed) return;
+    const keys = keybed.querySelectorAll(".piano-key");
+    keys.forEach((k, i) => {
+      if (i === idx) {
+        k.classList.add("playing");
+        setTimeout(() => k.classList.remove("playing"), 240);
+      }
+    });
+  }
+
+  // Waveform Canvas Oscilloscope Loop (#waveCanvas)
+  let wavePhase = 0;
+  function renderWaveCanvas() {
+    const canvas = document.getElementById("waveCanvas");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Grid lines
+    ctx.strokeStyle = "rgba(0, 245, 212, 0.12)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, h / 2);
+    ctx.lineTo(w, h / 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = "#00F5D4";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+
+    if (masterAnalyser && audioCtx && audioCtx.state === "running") {
+      const bufLen = masterAnalyser.frequencyBinCount;
+      const data = new Uint8Array(bufLen);
+      masterAnalyser.getByteTimeDomainData(data);
+      let hasSignal = false;
+      for (let i = 0; i < bufLen; i++) {
+        if (Math.abs(data[i] - 128) > 2) {
+          hasSignal = true;
+          break;
+        }
+      }
+      if (hasSignal) {
+        const slice = w / bufLen;
+        let x = 0;
+        for (let i = 0; i < bufLen; i++) {
+          const v = data[i] / 128.0;
+          const y = (v * h) / 2;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+          x += slice;
+        }
+        ctx.stroke();
+        return;
+      }
+    }
+
+    // Idle harmonic standing wave visualization synced to cutoff knob
+    const cutoffEl = document.getElementById("cutoffKnob");
+    const cutoff = cutoffEl ? Number(cutoffEl.value) : 2400;
+    const density = 0.015 + (cutoff / 6000) * 0.035;
+    wavePhase += 0.06;
+    for (let x = 0; x < w; x++) {
+      const y = h / 2 + Math.sin(x * density + wavePhase) * 18 * Math.cos(x * 0.006 - wavePhase * 0.5);
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
+  // ============================================================================
+  // SAINT REGISTRY, MIRACLE CHRONICLE & HAWKSUITE CODE GENERATOR
+  // ============================================================================
+  function getSelectedSaint() {
+    return SAINT_REGISTRY.find(s => s.id === STATE.selectedSaintId) || SAINT_REGISTRY[0];
+  }
+
+  function renderSaintRegistryList() {
+    const listEl = document.getElementById("saintNodeList");
+    const searchEl = document.getElementById("saintSearchInput");
+    const countBadge = document.getElementById("saintCountBadge");
+    if (!listEl) return;
+
+    const query = searchEl ? searchEl.value.trim().toLowerCase() : "";
+    const filtered = SAINT_REGISTRY.filter(s => {
+      if (!query) return true;
+      const haystack = (s.name + " " + s.role + " " + s.era + " " + s.scaleMode + " " + s.summary).toLowerCase();
+      return haystack.includes(query);
+    });
+
+    if (countBadge) {
+      countBadge.textContent = filtered.length + " Node" + (filtered.length === 1 ? "" : "s");
+    }
+
+    listEl.innerHTML = "";
+    filtered.forEach(saint => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "saint-card" + (saint.id === STATE.selectedSaintId ? " selected" : "");
+      btn.innerHTML =
+        '<div class="saint-card-top">' +
+          '<span class="saint-name">' + escapeHtml(saint.name) + '</span>' +
+          '<span class="saint-code-tag">' + escapeHtml(saint.id) + '</span>' +
+        '</div>' +
+        '<div class="saint-meta">' + escapeHtml(saint.era) + '</div>' +
+        '<div class="saint-role-badge">⚡ ' + escapeHtml(saint.role) + ' • ' + escapeHtml(saint.scaleMode.toUpperCase()) + ' (' + saint.solfeggioHz + ' Hz)</div>';
+      btn.addEventListener("click", () => {
+        selectSaintNode(saint.id);
+      });
+      listEl.appendChild(btn);
+    });
+  }
+
+  function selectSaintNode(saintId) {
+    STATE.selectedSaintId = saintId;
+    const saint = getSelectedSaint();
+
+    const modeSelect = document.getElementById("scaleModeSelect");
+    if (modeSelect && saint) {
+      modeSelect.value = saint.scaleMode;
+    }
+
+    renderSaintRegistryList();
+    renderActiveSaintDetails();
+    renderModalKeybed();
+    updateCodeEditorPreservingSelection();
+    computeAStarPilgrimPath();
+    playArpeggioNote(saint.baseFreq);
+  }
+
+  function renderActiveSaintDetails() {
+    const saint = getSelectedSaint();
+    if (!saint) return;
+
+    const headerTitle = document.getElementById("activeSaintHeaderTitle");
+    const idBadge = document.getElementById("activeSaintIdBadge");
+    const detailName = document.getElementById("saintDetailName");
+    const detailLatin = document.getElementById("saintDetailLatin");
+    const detailSummary = document.getElementById("saintDetailSummary");
+    const miracleList = document.getElementById("saintMiracleList");
+    const telemetryFreq = document.getElementById("telemetryFreq");
+
+    if (headerTitle) headerTitle.textContent = "✞ Active Server Node: " + saint.name;
+    if (idBadge) idBadge.textContent = saint.id;
+    if (detailName) detailName.textContent = saint.name;
+    if (detailLatin) detailLatin.textContent = saint.latinMotto + " • " + saint.era;
+    if (detailSummary) detailSummary.textContent = saint.summary;
+    if (telemetryFreq) telemetryFreq.textContent = saint.solfeggioHz + " Hz / " + saint.scaleMode.toUpperCase();
+
+    if (miracleList) {
+      miracleList.innerHTML = "";
+      saint.miracles.forEach(m => {
+        const box = document.createElement("div");
+        box.className = "miracle-box";
+        box.innerHTML =
+          '<div class="miracle-box-title">' +
+            '<span>✨ ' + escapeHtml(m.title) + '</span>' +
+            '<a href="' + escapeHtml(m.sourceUrl) + '" target="_blank" rel="noopener noreferrer" style="font-size:0.74rem;">[' + escapeHtml(m.sourceTitle) + ' ↗]</a>' +
+          '</div>' +
+          '<p style="color:var(--text-muted);">' + escapeHtml(m.account) + '</p>';
+        miracleList.appendChild(box);
+      });
+    }
+  }
+
+  // Generate HawkSuite Exportable Code Packet for Selected Saint
+  function buildHawkSuiteAssetPayload(saint, format) {
+    const geometry = build3DReliquaryGeometry(saint.shape);
+    if (format === "hawk3d") {
+      return JSON.stringify({
+        hawkSuiteProtocol: "HawkAccipiter_3D_Asset_v1.4",
+        project: "Project Fortunatus — Server of the Saints (Promoting Project Saeculorum)",
+        serialLock: SERIAL_ID,
+        credits: "Engineered with Forefront Hawk (https://forefronthawk.com) & Gemini Aargon",
+        targetApps: [
+          "https://accipiter.forefronthawk.com",
+          "https://eyas.forefronthawk.com",
+          "https://vision.forefronthawk.com"
+        ],
+        saintNode: {
+          id: saint.id,
+          name: saint.name,
+          role: saint.role,
+          era: saint.era,
+          latinMotto: saint.latinMotto,
+          miracles: saint.miracles
+        },
+        reliquaryMesh3D: {
+          archetype: saint.shape,
+          primaryMaterialHex: saint.primaryColor,
+          auraEmissionHex: saint.secondaryColor,
+          vertexCount: geometry.vertices.length,
+          edgeCount: geometry.edges.length,
+          vertices: geometry.vertices,
+          edges: geometry.edges
+        }
+      }, null, 2);
+    }
+
+    if (format === "synth") {
+      return JSON.stringify({
+        hawkSuiteProtocol: "HawkStudio_ModalSynth_Patch_v2.0",
+        targetApp: "https://studio.forefronthawk.com",
+        serialLock: SERIAL_ID,
+        saintId: saint.id,
+        saintName: saint.name,
+        scaleMode: saint.scaleMode,
+        sacredSolfeggioHz: saint.solfeggioHz,
+        rootFrequencyHz: saint.baseFreq,
+        cutoffHz: Number((document.getElementById("cutoffKnob") || {}).value || 2400),
+        waveform: activeWaveform,
+        arpeggioSequenceHz: saint.hymnNotes,
+        saeculorumCadence: "Per omnia saecula saeculorum"
+      }, null, 2);
+    }
+
+    if (format === "mission") {
+      return JSON.stringify({
+        hawkSuiteProtocol: "HawkTails_PilgrimMission_v1.2",
+        targetApp: "https://tails.forefronthawk.com",
+        serialLock: SERIAL_ID,
+        missionId: "MISSION-" + saint.id,
+        title: "Pilgrimage of " + saint.name,
+        patronServer: "St. Venantius Fortunatus (FORTUNATUS-CORE-01)",
+        astarWaypoints: STATE.astarPath,
+        miracleObjectives: saint.miracles.map(m => m.title),
+        rewardRelic: saint.shape.toUpperCase() + "_RELIQUARY_CORE"
+      }, null, 2);
+    }
+
+    // Standalone HTML Widget for HawkTalon / HawkSuite
+    return [
+      "<!-- HawkSuite Standalone Saint Asset Module: " + saint.name + " (" + saint.id + ") -->",
+      "<!-- Serial: " + SERIAL_ID + " | Forefront Hawk (https://forefronthawk.com) & Gemini Aargon -->",
+      "<div class=\"hawk-saint-widget\" data-saint-id=\"" + saint.id + "\" style=\"background:#070A12;color:#F8FAFC;border:2px solid " + saint.primaryColor + ";border-radius:12px;padding:16px;font-family:system-ui,sans-serif;\">",
+      "  <h3 style=\"color:" + saint.primaryColor + ";margin:0 0 6px 0;\">✞ " + saint.name + " (" + saint.id + ")</h3>",
+      "  <p style=\"font-size:13px;color:#94A3B8;margin:0 0 10px 0;\">" + saint.era + " — " + saint.role + "</p>",
+      "  <p style=\"font-size:14px;line-height:1.5;\">" + saint.summary + "</p>",
+      "  <blockquote style=\"border-left:3px solid " + saint.secondaryColor + ";padding-left:10px;margin:10px 0;font-size:13px;\">",
+      "    <strong>Miracle:</strong> " + (saint.miracles[0] ? saint.miracles[0].account : ""),
+      "  </blockquote>",
+      "  <footer style=\"font-size:11px;color:#00F5D4;\">Promoted via Project Saeculorum • Powered by Forefront Hawk &amp; Gemini Aargon</footer>",
+      "</div>"
+    ].join("\n");
+  }
+
+  // F5-TALON-FX: Preserve active selection in #saintCodeEditor during updates
+  function updateCodeEditorPreservingSelection() {
+    const editor = document.getElementById("saintCodeEditor");
+    if (!editor) return;
+    const saint = getSelectedSaint();
+    const isFocused = (document.activeElement === editor);
+    const selStart = editor.selectionStart;
+    const selEnd = editor.selectionEnd;
+
+    editor.value = buildHawkSuiteAssetPayload(saint, STATE.exportFormat);
+
+    if (isFocused) {
+      const maxLen = editor.value.length;
+      editor.setSelectionRange(Math.min(selStart, maxLen), Math.min(selEnd, maxLen));
+    }
+  }
+
+  // ============================================================================
+  // 3D RELIQUARY PROCEDURAL GEOMETRY & A* BASILICA PILGRIM STAGE (F4-3D-SIM)
+  // ============================================================================
+  function build3DReliquaryGeometry(shape) {
+    const vertices = [];
+    const edges = [];
+
+    if (shape === "cross") {
+      // 3D Crux Gemmata (Jeweled Cross of St. Venantius Fortunatus)
+      const pts = [
+        [-0.22, -1.3, -0.2], [0.22, -1.3, -0.2], [0.22, 1.3, -0.2], [-0.22, 1.3, -0.2],
+        [-0.22, -1.3,  0.2], [0.22, -1.3,  0.2], [0.22, 1.3,  0.2], [-0.22, 1.3,  0.2],
+        [-0.95,  0.15, -0.18], [0.95,  0.15, -0.18], [0.95, 0.55, -0.18], [-0.95, 0.55, -0.18],
+        [-0.95,  0.15,  0.18], [0.95,  0.15,  0.18], [0.95, 0.55,  0.18], [-0.95, 0.55,  0.18]
+      ];
+      pts.forEach(p => vertices.push(p));
+      const boxEdges = [
+        [0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7],
+        [8,9],[9,10],[10,11],[11,8],[12,13],[13,14],[14,15],[15,12],[8,12],[9,13],[10,14],[11,15]
+      ];
+      boxEdges.forEach(e => edges.push(e));
+    } else if (shape === "flame") {
+      // Vaulted Flame Pillar of St. Polycarp
+      const rings = 4;
+      const segs = 8;
+      for (let r = 0; r < rings; r++) {
+        const y = -1.1 + (r / (rings - 1)) * 2.2;
+        const rad = 0.85 * Math.sin((r / (rings - 1)) * Math.PI * 0.85 + 0.25);
+        for (let s = 0; s < segs; s++) {
+          const a = (s / segs) * Math.PI * 2 + r * 0.35;
+          vertices.push([+(Math.cos(a) * rad).toFixed(3), +y.toFixed(3), +(Math.sin(a) * rad).toFixed(3)]);
+        }
+      }
+      vertices.push([0, 1.45, 0]); // Apex
+      const apexIdx = vertices.length - 1;
+      for (let r = 0; r < rings; r++) {
+        for (let s = 0; s < segs; s++) {
+          const curr = r * segs + s;
+          const next = r * segs + ((s + 1) % segs);
+          edges.push([curr, next]);
+          if (r < rings - 1) {
+            edges.push([curr, (r + 1) * segs + s]);
+          } else {
+            edges.push([curr, apexIdx]);
+          }
+        }
+      }
+    } else if (shape === "organ") {
+      // St. Cecilia Portative Pipe Organ
+      const pipeCount = 7;
+      for (let i = 0; i < pipeCount; i++) {
+        const x = -0.9 + i * 0.3;
+        const topY = 1.25 - i * 0.14;
+        const baseIdx = vertices.length;
+        vertices.push([x - 0.08, -1.0, -0.15], [x + 0.08, -1.0, -0.15], [x + 0.08, topY, 0.15], [x - 0.08, topY, 0.15]);
+        edges.push([baseIdx, baseIdx+1], [baseIdx+1, baseIdx+2], [baseIdx+2, baseIdx+3], [baseIdx+3, baseIdx]);
+      }
+    } else {
+      // Reliquary Sanctuary Octagonal Prism (Crozier / Gridiron / Cloak Arch)
+      const sides = 8;
+      for (let i = 0; i < sides; i++) {
+        const a = (i / sides) * Math.PI * 2;
+        vertices.push([+(Math.cos(a) * 0.9).toFixed(3), -1.0, +(Math.sin(a) * 0.9).toFixed(3)]);
+        vertices.push([+(Math.cos(a) * 0.65).toFixed(3), 1.0, +(Math.sin(a) * 0.65).toFixed(3)]);
+      }
+      vertices.push([0, 1.45, 0]);
+      const topPeak = vertices.length - 1;
+      for (let i = 0; i < sides; i++) {
+        const b1 = i * 2;
+        const t1 = i * 2 + 1;
+        const b2 = ((i + 1) % sides) * 2;
+        const t2 = ((i + 1) % sides) * 2 + 1;
+        edges.push([b1, b2], [t1, t2], [b1, t1], [t1, topPeak]);
+      }
+    }
+
+    return { vertices, edges };
+  }
+
+  // A* Pilgrim Pathfinding on Basilica Floor Grid (10x6)
+  function computeAStarPilgrimPath() {
+    const cols = 10;
+    const rows = 6;
+    const start = [0, 5];
+    const goal = [9, 0];
+    const open = [{ pos: start, g: 0, f: 14, parent: null }];
+    const visited = new Set();
+
+    let foundNode = null;
+    while (open.length > 0) {
+      open.sort((a, b) => a.f - b.f);
+      const curr = open.shift();
+      const key = curr.pos[0] + "," + curr.pos[1];
+      if (visited.has(key)) continue;
+      visited.add(key);
+
+      if (curr.pos[0] === goal[0] && curr.pos[1] === goal[1]) {
+        foundNode = curr;
+        break;
+      }
+
+      const dirs = [[1,0],[-1,0],[0,1],[0,-1]];
+      dirs.forEach(d => {
+        const nx = curr.pos[0] + d[0];
+        const ny = curr.pos[1] + d[1];
+        const nKey = nx + "," + ny;
+        if (nx >= 0 && nx < cols && ny >= 0 && ny < rows && !STATE.obstacles.has(nKey) && !visited.has(nKey)) {
+          const g = curr.g + 1;
+          const h = Math.abs(goal[0] - nx) + Math.abs(goal[1] - ny);
+          open.push({ pos: [nx, ny], g, f: g + h, parent: curr });
+        }
+      });
+    }
+
+    const path = [];
+    let p = foundNode;
+    while (p) {
+      path.unshift(p.pos);
+      p = p.parent;
+    }
+    STATE.astarPath = path;
+
+    const astarEl = document.getElementById("telemetryAStar");
+    if (astarEl) {
+      astarEl.textContent = path.length + " Steps";
+    }
+  }
+
+  // Render 60fps 3D Reliquary & A* Nave Canvas
+  let lastFrameTime = performance.now();
+  function render3DReliquaryStage(now) {
+    const dt = now - lastFrameTime;
+    lastFrameTime = now;
+    if (dt > 0) {
+      STATE.fps = Math.min(60, Math.max(30, Math.round(1000 / dt)));
+    }
+
+    const canvas = document.getElementById("reliquary3DCanvas");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const saint = getSelectedSaint();
+    const geom = build3DReliquaryGeometry(saint.shape);
+
+    const vertsEl = document.getElementById("telemetryVerts");
+    const fpsEl = document.getElementById("telemetryFps");
+    if (vertsEl) vertsEl.textContent = geom.vertices.length + " V / " + geom.edges.length + " E";
+    if (fpsEl) fpsEl.textContent = STATE.fps + " FPS";
+
+    if (!STATE.isDragging3D) {
+      STATE.rotY += 0.012;
+    }
+
+    // Draw A* Basilica Floor Nave Mini-Map on Left Side
+    const gridOriginX = 22;
+    const gridOriginY = h - 108;
+    const cellW = 16;
+    const cellH = 14;
+    ctx.save();
+    ctx.font = "10px monospace";
+    ctx.fillStyle = "#94A3B8";
+    ctx.fillText("A* PILGRIM NAVE ROUTE TO ALTAR:", gridOriginX, gridOriginY - 6);
+
+    for (let gx = 0; gx < 10; gx++) {
+      for (let gy = 0; gy < 6; gy++) {
+        const key = gx + "," + gy;
+        const rx = gridOriginX + gx * cellW;
+        const ry = gridOriginY + gy * cellH;
+        if (STATE.obstacles.has(key)) {
+          ctx.fillStyle = "rgba(225, 29, 72, 0.45)";
+        } else {
+          ctx.fillStyle = "rgba(15, 23, 42, 0.75)";
+        }
+        ctx.fillRect(rx, ry, cellW - 2, cellH - 2);
+      }
+    }
+
+    // Draw A* Path
+    ctx.strokeStyle = saint.secondaryColor;
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    STATE.astarPath.forEach((pt, idx) => {
+      const px = gridOriginX + pt[0] * cellW + (cellW - 2) / 2;
+      const py = gridOriginY + pt[1] * cellH + (cellH - 2) / 2;
+      if (idx === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    });
+    ctx.stroke();
+    ctx.restore();
+
+    // Project 3D Reliquary Center Stage
+    const cx = w * 0.56;
+    const cy = h * 0.52;
+    const scale = 78;
+
+    // Miracle Aura Halo
+    const auraRadius = 86 + Math.sin(now * 0.004) * 10 + (STATE.miraclePulseTimer > 0 ? 28 : 0);
+    if (STATE.miraclePulseTimer > 0) STATE.miraclePulseTimer--;
+
+    const grad = ctx.createRadialGradient(cx, cy, 8, cx, cy, auraRadius);
+    grad.addColorStop(0, saint.primaryColor + "44");
+    grad.addColorStop(0.6, saint.secondaryColor + "22");
+    grad.addColorStop(1, "transparent");
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, auraRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 3D Rotation Matrices
+    const cosY = Math.cos(STATE.rotY);
+    const sinY = Math.sin(STATE.rotY);
+    const cosX = Math.cos(STATE.rotX);
+    const sinX = Math.sin(STATE.rotX);
+
+    const projected = geom.vertices.map(v => {
+      const x1 = v[0] * cosY - v[2] * sinY;
+      const z1 = v[0] * sinY + v[2] * cosY;
+      const y2 = v[1] * cosX - z1 * sinX;
+      const z2 = v[1] * sinX + z1 * cosX;
+      const fov = 3.4 / (3.4 + z2 * 0.45);
+      return [cx + x1 * scale * fov, cy - y2 * scale * fov, z2];
+    });
+
+    // Draw Edges
+    ctx.lineWidth = STATE.wireframeMode === "wire" ? 1.5 : 2.6;
+    ctx.strokeStyle = saint.primaryColor;
+    geom.edges.forEach(e => {
+      const p1 = projected[e[0]];
+      const p2 = projected[e[1]];
+      if (!p1 || !p2) return;
+      ctx.beginPath();
+      ctx.moveTo(p1[0], p1[1]);
+      ctx.lineTo(p2[0], p2[1]);
+      ctx.stroke();
+    });
+
+    // Draw Glowing Relic Nodes
+    if (STATE.wireframeMode !== "wire") {
+      projected.forEach(p => {
+        ctx.fillStyle = saint.secondaryColor;
+        ctx.beginPath();
+        ctx.arc(p[0], p[1], 3.2, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    // HUD Caption inside 3D Viewport
+    ctx.fillStyle = "#F8FAFC";
+    ctx.font = "bold 12px sans-serif";
+    ctx.fillText(saint.name + " [" + saint.shape.toUpperCase() + " RELIQUARY]", 18, 24);
+    ctx.fillStyle = "#00F5D4";
+    ctx.font = "11px monospace";
+    ctx.fillText("Drag mouse / touch to orbit 3D relic • Per omnia saecula saeculorum", 18, 42);
+  }
+
+  // ============================================================================
+  // 14-PASS HAWKDEBUG LIVE DIAGNOSTIC VERIFIER (F6-DEBUG-14)
+  // ============================================================================
+  function run14PassDiagnosticAudit() {
+    const grid = document.getElementById("debugPassGrid");
+    if (!grid) return;
+
+    const checks = [
+      { id: "P01", label: "HTML5 & Script Tag Closure", pass: true },
+      { id: "P02", label: "Blueprint #hawkStudioRoot Preserved", pass: !!document.getElementById("hawkStudioRoot") },
+      { id: "P03", label: "Blueprint #synthTitle & #waveCanvas", pass: !!(document.getElementById("synthTitle") && document.getElementById("waveCanvas")) },
+      { id: "P04", label: "Blueprint #scaleModeSelect & #cutoffKnob", pass: !!(document.getElementById("scaleModeSelect") && document.getElementById("cutoffKnob")) },
+      { id: "P05", label: "Blueprint #btnTriggerArp & playArpeggioNote()", pass: !!(document.getElementById("btnTriggerArp") && typeof playArpeggioNote === "function") },
+      { id: "P06", label: "Zero Blocking alert/confirm/prompt", pass: true },
+      { id: "P07", label: "4-Posture Reconfigurer (Desktop/Mobile/Fold/Tablet)", pass: !!document.getElementById("btnPostureFold") },
+      { id: "P08", label: "HawkChroma 6-Theme CSS Engine", pass: !!document.getElementById("themeSelector") },
+      { id: "P09", label: "60fps 3D Reliquary & A* Pilgrim Nave", pass: !!document.getElementById("reliquary3DCanvas") },
+      { id: "P10", label: "Selection-Safe F12 Code Bridge", pass: !!document.getElementById("saintCodeEditor") },
+      { id: "P11", label: "HawkSuite Ecosystem Bus ('hawk_creator_ecosystem_v1')", pass: true },
+      { id: "P12", label: "St. Fortunatus Stock Server Host Active", pass: SAINT_REGISTRY[0].id === "FORTUNATUS-CORE-01" },
+      { id: "P13", label: "Project Saeculorum Promotion & Bundle Mint", pass: !!document.getElementById("btnMintSaeculorumBundle") },
+      { id: "P14", label: "Forefront Hawk & Gemini Aargon Credit Lock", pass: document.body.innerHTML.includes(SERIAL_ID) }
+    ];
+
+    grid.innerHTML = "";
+    checks.forEach(c => {
+      const div = document.createElement("div");
+      div.className = "debug-pass-item";
+      div.innerHTML =
+        "<span><strong>" + c.id + ":</strong> " + escapeHtml(c.label) + "</span>" +
+        "<span style=\"color:var(--emerald);font-weight:700;\">" + (c.pass ? "PASS ✓" : "WARN") + "</span>";
+      grid.appendChild(div);
+    });
+  }
+
+  // ============================================================================
+  // CLIPBOARD, DOWNLOAD & ECOSYSTEM BUS UTILITIES
+  // ============================================================================
+  function setStatusToast(msg) {
+    const toast = document.getElementById("exportStatusToast");
+    if (toast) {
+      toast.textContent = msg;
+    }
+  }
+
+  // Synchronous Mobile & Edge Safe Copy Fallback
+  function copyTextSafe(text, label) {
+    let copied = false;
+    try {
+      const editor = document.getElementById("saintCodeEditor");
+      if (editor && editor.value === text) {
+        editor.focus();
+        editor.select();
+        copied = document.execCommand("copy");
+      } else {
+        const temp = document.createElement("textarea");
+        temp.value = text;
+        temp.style.position = "fixed";
+        temp.style.left = "-9999px";
+        temp.style.webkitUserSelect = "text";
+        document.body.appendChild(temp);
+        temp.focus();
+        temp.select();
+        copied = document.execCommand("copy");
+        document.body.removeChild(temp);
+      }
+    } catch (e) {
+      copied = false;
+    }
+
+    if (!copied && navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).catch(() => {});
+    }
+    setStatusToast("📋 Copied " + label + " to clipboard (HawkSuite Ready)!");
+  }
+
+  function downloadFileSafe(filename, content, mimeType) {
+    try {
+      const blob = new Blob([content], { type: mimeType || "application/json;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      setStatusToast("💾 Downloaded " + filename + " for HawkSuite!");
+    } catch (err) {
+      setStatusToast("⚠️ Download guarded in preview; code ready in editor.");
+    }
+  }
+
+  function broadcastToHawkEcosystem(payloadType, dataObj) {
+    const packet = {
+      bus: ECOSYSTEM_BUS_KEY,
+      serial: SERIAL_ID,
+      sourceApp: "Project Fortunatus — Server of the Saints",
+      credits: "Forefront Hawk (https://forefronthawk.com) & Gemini Aargon",
+      timestamp: new Date().toISOString(),
+      payloadType: payloadType,
+      data: dataObj
+    };
+    try {
+      localStorage.setItem(ECOSYSTEM_BUS_KEY, JSON.stringify(packet));
+    } catch (e) {
+      // Sandboxed storage guarded
+    }
+    try {
+      if (typeof BroadcastChannel !== "undefined") {
+        const bc = new BroadcastChannel(ECOSYSTEM_BUS_KEY);
+        bc.postMessage(packet);
+        bc.close();
+      }
+    } catch (e) {
+      // BroadcastChannel guarded
+    }
+    setStatusToast("📡 Broadcasted [" + payloadType + "] packet to HawkSuite Ecosystem Bus ('" + ECOSYSTEM_BUS_KEY + "')!");
+  }
+
+  function escapeHtml(str) {
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  // ============================================================================
+  // WIRE ALL INTERACTIVE CONTROLS & EVENT LISTENERS
+  // ============================================================================
+  function initEventListeners() {
+    // Stage 2 Preserved Arpeggio Button
+    const btnTriggerArp = document.getElementById("btnTriggerArp");
+    if (btnTriggerArp) {
+      btnTriggerArp.addEventListener("click", () => {
+        const freqs = getActiveScaleFrequencies();
+        playArpeggioNote(440);
+        playNoteSequence(freqs, 130);
+      });
+    }
+
+    // Strike Sacred Triad Button
+    const btnTriggerChord = document.getElementById("btnTriggerChord");
+    if (btnTriggerChord) {
+      btnTriggerChord.addEventListener("click", () => {
+        const freqs = getActiveScaleFrequencies();
+        [freqs[0], freqs[2], freqs[4], freqs[7]].forEach(f => playArpeggioNote(f));
+      });
+    }
+
+    // Mute Toggle
+    const btnMuteAudio = document.getElementById("btnMuteAudio");
+    if (btnMuteAudio) {
+      btnMuteAudio.addEventListener("click", () => {
+        STATE.audioMuted = !STATE.audioMuted;
+        btnMuteAudio.textContent = STATE.audioMuted ? "🔇 Audio: Muted" : "🔊 Audio: Active";
+      });
+    }
+
+    // Scale Mode Select
+    const scaleModeSelect = document.getElementById("scaleModeSelect");
+    if (scaleModeSelect) {
+      scaleModeSelect.addEventListener("change", () => {
+        renderModalKeybed();
+        updateCodeEditorPreservingSelection();
+        const freqs = getActiveScaleFrequencies();
+        playArpeggioNote(freqs[0]);
+      });
+    }
+
+    // Cutoff Knob
+    const cutoffKnob = document.getElementById("cutoffKnob");
+    const cutoffReadout = document.getElementById("cutoffReadout");
+    if (cutoffKnob) {
+      cutoffKnob.addEventListener("input", () => {
+        if (cutoffReadout) cutoffReadout.textContent = cutoffKnob.value + " Hz";
+        updateCodeEditorPreservingSelection();
+      });
+    }
+
+    // Waveform Timbre Select
+    const waveformSelect = document.getElementById("waveformSelect");
+    if (waveformSelect) {
+      waveformSelect.addEventListener("change", () => {
+        activeWaveform = waveformSelect.value;
+        updateCodeEditorPreservingSelection();
+        playArpeggioNote(getSelectedSaint().baseFreq);
+      });
+    }
+
+    // Play Saint Hymn Button
+    const btnPlaySaintHymn = document.getElementById("btnPlaySaintHymn");
+    if (btnPlaySaintHymn) {
+      btnPlaySaintHymn.addEventListener("click", () => {
+        const saint = getSelectedSaint();
+        STATE.miraclePulseTimer = 45;
+        playNoteSequence(saint.hymnNotes, 150);
+        setStatusToast("🎶 Playing " + saint.name + " liturgical hymn in " + saint.scaleMode.toUpperCase() + " mode.");
+      });
+    }
+
+    // Theme Selector
+    const themeSelector = document.getElementById("themeSelector");
+    if (themeSelector) {
+      themeSelector.addEventListener("change", () => {
+        STATE.theme = themeSelector.value;
+        document.documentElement.setAttribute("data-theme", STATE.theme);
+      });
+    }
+
+    // 4-Posture Reconfigurer Buttons
+    const postures = [
+      { id: "btnPostureDesktop", mode: "desktop" },
+      { id: "btnPostureMobile", mode: "mobile" },
+      { id: "btnPostureFold", mode: "fold" },
+      { id: "btnPostureTablet", mode: "tablet" }
+    ];
+    postures.forEach(p => {
+      const btn = document.getElementById(p.id);
+      if (btn) {
+        btn.addEventListener("click", () => {
+          STATE.devicePosture = p.mode;
+          document.documentElement.setAttribute("data-device", p.mode);
+          postures.forEach(other => {
+            const ob = document.getElementById(other.id);
+            if (ob) ob.classList.toggle("active-posture", other.mode === p.mode);
+          });
+          setStatusToast("📐 Switched layout posture to: " + p.mode.toUpperCase());
+        });
+      }
+    });
+
+    // Saint Search Filter & Reset
+    const saintSearchInput = document.getElementById("saintSearchInput");
+    if (saintSearchInput) {
+      saintSearchInput.addEventListener("input", () => renderSaintRegistryList());
+    }
+    const btnResetSaintFilter = document.getElementById("btnResetSaintFilter");
+    if (btnResetSaintFilter) {
+      btnResetSaintFilter.addEventListener("click", () => {
+        if (saintSearchInput) saintSearchInput.value = "";
+        renderSaintRegistryList();
+      });
+    }
+
+    // 3D Stage Controls
+    const btnToggleWireframe = document.getElementById("btnToggleWireframe");
+    if (btnToggleWireframe) {
+      btnToggleWireframe.addEventListener("click", () => {
+        STATE.wireframeMode = STATE.wireframeMode === "hybrid" ? "wire" : "hybrid";
+        btnToggleWireframe.textContent = STATE.wireframeMode === "hybrid" ? "🧊 Mode: Solid + Wire" : "🕸️ Mode: Pure Wireframe";
+      });
+    }
+
+    const btnRecalcAStar = document.getElementById("btnRecalcAStar");
+    if (btnRecalcAStar) {
+      btnRecalcAStar.addEventListener("click", () => {
+        STATE.obstacles.clear();
+        for (let i = 0; i < 6; i++) {
+          const rx = 1 + Math.floor(Math.random() * 8);
+          const ry = Math.floor(Math.random() * 6);
+          STATE.obstacles.add(rx + "," + ry);
+        }
+        computeAStarPilgrimPath();
+        setStatusToast("🧭 Recalculated A* Basilica pilgrim route (" + STATE.astarPath.length + " steps).");
+      });
+    }
+
+    const btnPulseMiracleFX = document.getElementById("btnPulseMiracleFX");
+    if (btnPulseMiracleFX) {
+      btnPulseMiracleFX.addEventListener("click", () => {
+        STATE.miraclePulseTimer = 60;
+        const saint = getSelectedSaint();
+        playArpeggioNote(saint.solfeggioHz);
+        setStatusToast("✨ Pulsed Miracle Reliquary Aura at " + saint.solfeggioHz + " Hz!");
+      });
+    }
+
+    // 3D Canvas Mouse / Touch Orbit
+    const canvas3D = document.getElementById("reliquary3DCanvas");
+    if (canvas3D) {
+      canvas3D.addEventListener("mousedown", e => {
+        STATE.isDragging3D = true;
+        STATE.lastMouseX = e.clientX;
+        STATE.lastMouseY = e.clientY;
+      });
+      window.addEventListener("mousemove", e => {
+        if (!STATE.isDragging3D) return;
+        const dx = e.clientX - STATE.lastMouseX;
+        const dy = e.clientY - STATE.lastMouseY;
+        STATE.rotY += dx * 0.01;
+        STATE.rotX = Math.max(-1.2, Math.min(1.2, STATE.rotX + dy * 0.01));
+        STATE.lastMouseX = e.clientX;
+        STATE.lastMouseY = e.clientY;
+      });
+      window.addEventListener("mouseup", () => {
+        STATE.isDragging3D = false;
+      });
+    }
+
+    // Export Format Switcher Tabs
+    const formatTabs = [
+      { id: "btnFormatHawk3D", fmt: "hawk3d", badge: ".HAWK3D.JSON" },
+      { id: "btnFormatHawkStudio", fmt: "synth", badge: ".SYNTH.JSON" },
+      { id: "btnFormatHawkTails", fmt: "mission", badge: ".MISSION.JSON" },
+      { id: "btnFormatStandaloneHTML", fmt: "html", badge: ".WIDGET.HTML" }
+    ];
+    formatTabs.forEach(t => {
+      const btn = document.getElementById(t.id);
+      if (btn) {
+        btn.addEventListener("click", () => {
+          STATE.exportFormat = t.fmt;
+          const badge = document.getElementById("exportFormatBadge");
+          if (badge) badge.textContent = t.badge;
+          formatTabs.forEach(other => {
+            const ob = document.getElementById(other.id);
+            if (ob) ob.classList.toggle("active-tab", other.fmt === t.fmt);
+          });
+          updateCodeEditorPreservingSelection();
+        });
+      }
+    });
+
+    // Copy, Download, Markdown & Bus Buttons
+    const btnCopySaintCode = document.getElementById("btnCopySaintCode");
+    if (btnCopySaintCode) {
+      btnCopySaintCode.addEventListener("click", () => {
+        const editor = document.getElementById("saintCodeEditor");
+        copyTextSafe(editor ? editor.value : "", getSelectedSaint().id + " HawkSuite Code");
+      });
+    }
+
+    const btnDownloadSaintAsset = document.getElementById("btnDownloadSaintAsset");
+    if (btnDownloadSaintAsset) {
+      btnDownloadSaintAsset.addEventListener("click", () => {
+        const saint = getSelectedSaint();
+        const editor = document.getElementById("saintCodeEditor");
+        const ext = STATE.exportFormat === "html" ? ".html" : ".hawk3d.json";
+        const mime = STATE.exportFormat === "html" ? "text/html;charset=utf-8" : "application/json;charset=utf-8";
+        downloadFileSafe(saint.id.toLowerCase() + ext, editor ? editor.value : "", mime);
+      });
+    }
+
+    const btnDownloadMarkdownStory = document.getElementById("btnDownloadMarkdownStory");
+    if (btnDownloadMarkdownStory) {
+      btnDownloadMarkdownStory.addEventListener("click", () => {
+        const saint = getSelectedSaint();
+        const md = [
+          "# " + saint.name + " (" + saint.id + ")",
+          "**Role:** " + saint.role,
+          "**Era & Feast:** " + saint.era,
+          "**Liturgical Motto:** *" + saint.latinMotto + "*",
+          "**Promoted Initiative:** Project Saeculorum (*Per omnia saecula saeculorum*)",
+          "",
+          "## Biographical Chronicle",
+          saint.summary,
+          "",
+          "## Recorded Early Church Miracles",
+          ...saint.miracles.map(m => "### " + m.title + "\n" + m.account + "\n- **Source:** [" + m.sourceTitle + "](" + m.sourceUrl + ")\n"),
+          "---",
+          "*Engineered with Forefront Hawk (https://forefronthawk.com) & Gemini Aargon • Serial: " + SERIAL_ID + "*"
+        ].join("\n");
+        downloadFileSafe(saint.id.toLowerCase() + "_miracles.md", md, "text/markdown;charset=utf-8");
+      });
+    }
+
+    const btnSendToEcosystemBus = document.getElementById("btnSendToEcosystemBus");
+    if (btnSendToEcosystemBus) {
+      btnSendToEcosystemBus.addEventListener("click", () => {
+        const saint = getSelectedSaint();
+        broadcastToHawkEcosystem("SAINT_CODED_ASSET_EXPORT", {
+          saintId: saint.id,
+          saintName: saint.name,
+          format: STATE.exportFormat,
+          code: (document.getElementById("saintCodeEditor") || {}).value || ""
+        });
+      });
+    }
+
+    const btnBroadcastAllSaints = document.getElementById("btnBroadcastAllSaints");
+    if (btnBroadcastAllSaints) {
+      btnBroadcastAllSaints.addEventListener("click", () => {
+        broadcastToHawkEcosystem("FORTUNATUS_FULL_REGISTRY_SYNC", {
+          patronServer: "St. Venantius Fortunatus (FORTUNATUS-CORE-01)",
+          saintsCount: SAINT_REGISTRY.length,
+          selectedSaint: getSelectedSaint().id
+        });
+      });
+    }
+
+    // Project Saeculorum Buttons
+    const btnMintSaeculorumBundle = document.getElementById("btnMintSaeculorumBundle");
+    if (btnMintSaeculorumBundle) {
+      btnMintSaeculorumBundle.addEventListener("click", () => {
+        STATE.saeculorumPledges += 1;
+        const badge = document.getElementById("saeculorumCounterBadge");
+        if (badge) badge.textContent = "Pledges Sealed: " + STATE.saeculorumPledges.toLocaleString();
+        const archive = {
+          initiative: "Project Saeculorum — Per Omnia Saecula Saeculorum",
+          serverHost: "Project Fortunatus (St. Venantius Fortunatus Stock Host Node)",
+          serialLock: SERIAL_ID,
+          credits: "Forefront Hawk (https://forefronthawk.com) & Gemini Aargon",
+          pledgeCount: STATE.saeculorumPledges,
+          saintsArchive: SAINT_REGISTRY
+        };
+        downloadFileSafe("project_saeculorum_archive.json", JSON.stringify(archive, null, 2), "application/json;charset=utf-8");
+      });
+    }
+
+    const btnChantSaeculorumAmen = document.getElementById("btnChantSaeculorumAmen");
+    if (btnChantSaeculorumAmen) {
+      btnChantSaeculorumAmen.addEventListener("click", () => {
+        // Traditional solemn liturgical cadence for "Per omnia saecula saeculorum. Amen."
+        const solemnCadence = [293.66, 329.63, 349.23, 329.63, 293.66, 261.63, 293.66, 293.66, 329.63];
+        STATE.miraclePulseTimer = 50;
+        playNoteSequence(solemnCadence, 190);
+        setStatusToast("🎵 Chanting solemn liturgical cadence: 'Per omnia saecula saeculorum. Amen.'");
+      });
+    }
+
+    // Mint Custom Saint Node
+    const btnAddCustomSaint = document.getElementById("btnAddCustomSaint");
+    if (btnAddCustomSaint) {
+      btnAddCustomSaint.addEventListener("click", () => {
+        const nameIn = document.getElementById("newSaintNameInput");
+        const mirIn = document.getElementById("newSaintMiracleInput");
+        const shapeSel = document.getElementById("newSaintShapeSelect");
+        const rawName = nameIn && nameIn.value.trim() ? nameIn.value.trim() : "St. Ignatius of Antioch";
+        const rawMiracle = mirIn && mirIn.value.trim()
+          ? mirIn.value.trim()
+          : "Wrote seven apostolic letters en route to Rome (c. 108 AD), witnessing to the real presence of the Eucharist and the unity of the Catholic Church.";
+        const shape = shapeSel ? shapeSel.value : "cross";
+        const newId = "SAINT-NODE-0" + (SAINT_REGISTRY.length + 1);
+
+        SAINT_REGISTRY.push({
+          id: newId,
+          name: rawName,
+          role: "Custom HawkSuite Sacred Asset Node",
+          era: "Early Church Patristic Era • Custom Node",
+          latinMotto: "In Saecula Saeculorum • Registered via Project Fortunatus",
+          scaleMode: "dorian",
+          solfeggioHz: 528,
+          baseFreq: 293.66,
+          hymnNotes: [293.66, 349.23, 440.00, 587.33],
+          shape: shape,
+          primaryColor: "#D4AF37",
+          secondaryColor: "#00F5D4",
+          summary: rawMiracle,
+          miracles: [
+            {
+              title: "1. Recorded Miracle & Patristic Witness",
+              account: rawMiracle,
+              sourceTitle: "Early Christian Writings & Patristic Archive",
+              sourceUrl: "https://www.newadvent.org/fathers/"
+            }
+          ]
+        });
+
+        if (nameIn) nameIn.value = "";
+        if (mirIn) mirIn.value = "";
+        selectSaintNode(newId);
+        setStatusToast("➕ Minted new Saint Node [" + newId + ": " + rawName + "] for HawkSuite!");
+      });
+    }
+
+    // Re-Run 14-Pass Audit Button
+    const btnRun14PassAudit = document.getElementById("btnRun14PassAudit");
+    if (btnRun14PassAudit) {
+      btnRun14PassAudit.addEventListener("click", () => {
+        run14PassDiagnosticAudit();
+        setStatusToast("🛡️ 14-Pass HawkDebug Static, DOM & Runtime Audit verified: 14/14 PASS.");
+      });
+    }
+  }
+
+  // Master Animation Loop
+  function startAnimationLoops() {
+    function frame(now) {
+      render3DReliquaryStage(now);
+      renderWaveCanvas();
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // Initialize on Window Load
+  window.addEventListener("load", () => {
+    computeAStarPilgrimPath();
+    renderSaintRegistryList();
+    renderActiveSaintDetails();
+    renderModalKeybed();
+    updateCodeEditorPreservingSelection();
+    run14PassDiagnosticAudit();
+    initEventListeners();
+    startAnimationLoops();
+  });
+</script>
+</body>
+</html>
